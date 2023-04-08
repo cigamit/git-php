@@ -1,5 +1,5 @@
 {
-	"name": "czproject/git-php",
+	"name": "cigamit/git-php",
 	"type": "library",
 	"description": "Library for work with Git repository in PHP.",
 	"keywords": ["git"],
