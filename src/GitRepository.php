@@ -443,7 +443,46 @@
 			);
 		}
 
+		/**
+		 * Returns the Git History for a file
+		 * Returns an array of Commit objects
+		 * @param  string $file
+		 * @param  int|FALSE $number_of_commits
+		 * @return array
+		 * @throws GitException
+		 */
+		public function getFileHistory($file, $number_of_commits=FALSE)
+		{
+			if (intval($number_of_commits)) {
+				$result = $this->run('log', "-$number_of_commits", '--', $file);
+			} else {
+				$result = $this->run('log', '--', $file);
+			}
+			$results = explode("\n", $result->getOutputAsString());
+			$commits = array();
+			foreach ($results as $r) {
+				if (substr($r, 0, 7) == 'commit ') {
+					$c = trim(substr($r, 7));
+					$commits[] = $this->getCommit($c);
+				}
+			}
+			return $commits;
+		}
 
+		/**
+		 * Returns an inline diff of two commits
+		 * @param  string $file
+		 * @param  string $commit1
+		 * @param  string $commit2
+		 * @return array
+		 * @throws GitException
+		 */
+		public function getCommitDiff($file, $commit1, $commit2)
+		{
+			$result = $this->run('diff', '--word-diff=plain', $commit1, $commit2, $file);
+			return $result->getOutput();
+		}
+		
 		/**
 		 * Exists changes?
 		 * `git status` + magic
